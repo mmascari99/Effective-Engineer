@@ -15,33 +15,40 @@
 #
 # ...c'mon, nobody commits EVERY day ;)
 #
-info="Commit: $(date)"
-echo "OS detected: $OSTYPE"
+RANDOM=$$
+TEST=$RANDOM
 
-case "$OSTYPE" in
-    darwin*)
-        cd "`dirname $0`" || exit 1
-        ;;
+# Dertermine if we are commiting today.
+while ((TEST % 7 > 2)); do
+	info="Commit: $(date)"
+	echo "OS detected: $OSTYPE"
 
-    linux*)
-        cd "$(dirname "$(readlink -f "$0")")" || exit 1
-        ;;
+	case "$OSTYPE" in
+    	darwin*)
+        	cd "`dirname $0`" || exit 1
+        	;;
 
-    *)
-        echo "OS unsupported (submit an issue on GitHub!)"
-        ;;
-esac
+    	linux*)
+        	cd "$(dirname "$(readlink -f "$0")")" || exit 1
+        	;;
 
-echo "$info" >> output.txt
-echo "$info"
-echo
+    	*)
+        	echo "OS unsupported (submit an issue on GitHub!)"
+        	;;
+	esac
 
-# Detect current branch (main, master, etc)
-branch=$(git rev-parse --abbrev-ref HEAD)
+	echo "$info" >> output.txt
+	echo "$info"
+	echo
 
-# Ship it
-git add output.txt
-git commit -m "$info"
-git push origin "$branch"
+	# Detect current branch (main, master, etc)
+	branch=$(git rev-parse --abbrev-ref HEAD)
 
-cd -
+	# Ship it
+	git add output.txt
+	git commit -m "$info"
+	git push origin "$branch"
+
+	cd -
+	((TEST--))
+done 
